@@ -1,0 +1,101 @@
+[
+ {
+  "index": 1,
+  "category": "animal",
+  "prompt": "A red fox curled asleep in fresh powder snow, individual guard hairs catching low winter sun, birch trunks blurred behind"
+ },
+ {
+  "index": 5,
+  "category": "animal",
+  "prompt": "A barn owl gliding low over a meadow at dusk, wing feathers spread and translucent, soft grasses beneath"
+ },
+ {
+  "index": 6,
+  "category": "landscape",
+  "prompt": "Terraced rice fields on a mountainside at dawn, mist lying between the ridges, flooded terraces mirroring a pale sky"
+ },
+ {
+  "index": 7,
+  "category": "landscape",
+  "prompt": "An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy"
+ },
+ {
+  "index": 9,
+  "category": "landscape",
+  "prompt": "Icebergs in a still arctic bay beneath the aurora, green and violet light reflected in black water, snow-covered peaks"
+ },
+ {
+  "index": 10,
+  "category": "landscape",
+  "prompt": "A desert canyon at golden hour, layered sandstone walls in orange and violet, a narrow green river far below"
+ },
+ {
+  "index": 12,
+  "category": "architecture",
+  "prompt": "The interior of a baroque library hall, carved walnut galleries and spiral stairs, a painted ceiling fresco, sunlight through tall arched windows"
+ },
+ {
+  "index": 13,
+  "category": "architecture",
+  "prompt": "A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies",
+  "crop": "lit windows and balconies"
+ },
+ {
+  "index": 14,
+  "category": "architecture",
+  "prompt": "A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees",
+  "crop": "carved stucco and muqarnas"
+ },
+ {
+  "index": 16,
+  "category": "architecture",
+  "prompt": "A Japanese temple in autumn, moss garden and raked gravel, maple leaves on the ground, fine wooden joinery under deep eaves"
+ },
+ {
+  "index": 17,
+  "category": "architecture",
+  "prompt": "A narrow Venetian canal at blue hour, weathered plaster facades, lamplight on the water, a moored boat under a stone bridge"
+ },
+ {
+  "index": 18,
+  "category": "macro",
+  "prompt": "A peacock feather in raking light, individual barbs separated, iridescent eyespot shifting from blue to green",
+  "crop": "separated feather barbs"
+ },
+ {
+  "index": 22,
+  "category": "macro",
+  "prompt": "Fern-shaped frost crystals spreading across a window pane at sunrise, warm light refracting through the ice"
+ },
+ {
+  "index": 23,
+  "category": "macro",
+  "prompt": "A spiderweb strung with dew at sunrise, each droplet holding an inverted image of the meadow behind"
+ },
+ {
+  "index": 24,
+  "category": "figure",
+  "prompt": "An elderly potter's hands shaping a tall vessel on a wheel, wet clay ridged under the fingers, dim workshop light"
+ },
+ {
+  "index": 25,
+  "category": "figure",
+  "prompt": "A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light",
+  "crop": "embroidery, stitch by stitch"
+ },
+ {
+  "index": 28,
+  "category": "illustration",
+  "prompt": "A watercolour of a mountain village under snow, soft graded washes and visible paper grain, muted blues and warm window light"
+ },
+ {
+  "index": 31,
+  "category": "illustration",
+  "prompt": "An oil still life of copper pots, figs and a linen cloth on a dark table, thick visible brushwork, single window light"
+ },
+ {
+  "index": 33,
+  "category": "underwater",
+  "prompt": "A translucent jellyfish drifting in dark water, trailing tentacles catching a single beam of light"
+ }
+]

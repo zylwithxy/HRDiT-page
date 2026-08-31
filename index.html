@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HRDiT: Training-Free High-Resolution Image Generation with Off-the-Shelf DiT Models</title>
+<meta name="description" content="HRDiT adapts off-the-shelf Diffusion Transformer models to high-resolution image generation without any training, addressing spatial disorder and long generation time. ECCV 2026.">
+<meta property="og:title" content="HRDiT: Training-Free High-Resolution Image Generation with Off-the-Shelf Diffusion Transformer Models">
+<meta property="og:description" content="Training-free 4K generation from off-the-shelf DiT models. ECCV 2026.">
+<meta property="og:image" content="static/images/fig1_motivation.png">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="venue">ECCV 2026</span>
+    <h1>
+      <span class="short">HRDiT</span>
+      Training-Free High-Resolution Image Generation with<br>
+      Off-the-Shelf Diffusion Transformer Models
+    </h1>
+
+    <p class="authors">
+      <a href="https://scholar.google.com/citations?user=NEq20UYAAAAJ">Yu Xue</a><sup>1</sup>,
+      <a href="https://scholar.google.com/citations?user=fR83-ycAAAAJ">Haoxuan Qu</a><sup>1</sup>,
+      <a href="https://zhuoling.site/">Zhuoling Li</a><sup>1</sup>,
+      <a href="https://scholar.google.com/citations?hl=zh-CN&amp;user=mRC_emoAAAAJ&amp;view_op=list_works&amp;sortby=pubdate">Hongbin Xu</a><sup>2</sup>,
+      <a href="https://scholar.google.com/citations?user=sRmq2kEAAAAJ">Jianxiong Yin</a><sup>3</sup>,
+      <a href="https://scholar.google.com/citations?user=ebIHTEoAAAAJ">Simon See</a><sup>3</sup>,
+      <a href="https://scholar.google.com/citations?user=zFyT_gwAAAAJ">Hossein Rahmani</a><sup>1</sup>,
+      <a href="https://scholar.google.com/citations?user=Q5Ild8UAAAAJ">Jun Liu</a><sup>1</sup>
+    </p>
+    <p class="affil">
+      <sup>1</sup>Lancaster University &nbsp;·&nbsp;
+      <sup>2</sup>South China University of Technology &nbsp;·&nbsp;
+      <sup>3</sup>NVIDIA AI Tech Centre
+    </p>
+
+    <div class="links">
+      <a class="btn" href="https://arxiv.org/abs/2608.07003">
+        <svg viewBox="0 0 24 24"><path d="M12 2 2 7v10l10 5 10-5V7L12 2zm0 2.2 7.5 3.8-7.5 3.7-7.5-3.7L12 4.2z"/></svg>
+        arXiv
+      </a>
+      <a class="btn" href="https://arxiv.org/pdf/2608.07003">
+        <svg viewBox="0 0 24 24"><path d="M6 2h8l6 6v14H6V2zm7 1.5V9h5.5L13 3.5zM8 13h8v1.6H8V13zm0 3.4h8V18H8v-1.6z"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="https://github.com/zylwithxy/HRDiT">
+        <svg viewBox="0 0 24 24"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.8 18.3 5.1 18.3 5.1c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="https://github.com/zylwithxy/HRDiT-HAP">
+        <svg viewBox="0 0 24 24"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.8 18.3 5.1 18.3 5.1c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+        HAP scopes
+      </a>
+      <a class="btn" href="https://www.youtube.com/watch?v=sW20BTHyXgE">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 6 7 4-7 4V8z"/></svg>
+        Video
+      </a>
+      <a class="btn" href="https://huggingface.co/papers/2608.07003">
+        <span class="emoji" aria-hidden="true">🤗</span>
+        HF Paper
+      </a>
+      <a class="btn" href="https://github.com/wildminder/ComfyUI-DyPE">
+        <svg viewBox="0 0 24 24"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.7 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.8 18.3 5.1 18.3 5.1c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+        ComfyUI
+      </a>
+      <a class="btn" href="https://huggingface.co/remyxai/hrdit-flux-modular">
+        <span class="emoji" aria-hidden="true">🤗</span>
+        Diffusers
+      </a>
+    </div>
+  </div>
+</header>
+
+<section id="abstract">
+  <div class="wrap lead">
+    <h2>Abstract</h2>
+    <p>
+      Training-free text-to-high-resolution image generation has recently attracted
+      growing research attention. However, existing studies on this task primarily
+      focus on adapting off-the-shelf U-Net-based diffusion models to high
+      resolutions, with limited progress on adapting off-the-shelf Diffusion
+      Transformer (DiT) models despite their strong text-to-image generation
+      capabilities at limited resolutions. In this work, we find two key challenges
+      particularly hindering the application of off-the-shelf DiT models for
+      high-resolution image synthesis in a training-free manner, namely,
+      <b>spatial disorder</b> and <b>long generation time</b>. To address these
+      challenges, we propose a novel method tailored to adapt off-the-shelf DiT
+      models for high-resolution image synthesis. Extensive experiments show the
+      efficacy of our method.
+    </p>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="wrap wide-wrap">
+    <div class="mosaic">
+      <button class="wide" data-view="static/gallery/view/13.jpg" data-prompt="A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+        <img src="static/gallery/tile/13.jpg" loading="lazy" alt="A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/1.jpg" data-prompt="A red fox curled asleep in fresh powder snow, individual guard hairs catching low winter sun, birch trunks blurred behind">
+        <img src="static/gallery/tile/1.jpg" loading="lazy" alt="A red fox curled asleep in fresh powder snow, individual guard hairs catching low winter sun, birch trunks blurred behind">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/18.jpg" data-prompt="A peacock feather in raking light, individual barbs separated, iridescent eyespot shifting from blue to green">
+        <img src="static/gallery/tile/18.jpg" loading="lazy" alt="A peacock feather in raking light, individual barbs separated, iridescent eyespot shifting from blue to green">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/7.jpg" data-prompt="An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy">
+        <img src="static/gallery/tile/7.jpg" loading="lazy" alt="An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button class="wide" data-view="static/gallery/view/9.jpg" data-prompt="Icebergs in a still arctic bay beneath the aurora, green and violet light reflected in black water, snow-covered peaks">
+        <img src="static/gallery/tile/9.jpg" loading="lazy" alt="Icebergs in a still arctic bay beneath the aurora, green and violet light reflected in black water, snow-covered peaks">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/22.jpg" data-prompt="Fern-shaped frost crystals spreading across a window pane at sunrise, warm light refracting through the ice">
+        <img src="static/gallery/tile/22.jpg" loading="lazy" alt="Fern-shaped frost crystals spreading across a window pane at sunrise, warm light refracting through the ice">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/12.jpg" data-prompt="The interior of a baroque library hall, carved walnut galleries and spiral stairs, a painted ceiling fresco, sunlight through tall arched windows">
+        <img src="static/gallery/tile/12.jpg" loading="lazy" alt="The interior of a baroque library hall, carved walnut galleries and spiral stairs, a painted ceiling fresco, sunlight through tall arched windows">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/33.jpg" data-prompt="A translucent jellyfish drifting in dark water, trailing tentacles catching a single beam of light">
+        <img src="static/gallery/tile/33.jpg" loading="lazy" alt="A translucent jellyfish drifting in dark water, trailing tentacles catching a single beam of light">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/14.jpg" data-prompt="A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+        <img src="static/gallery/tile/14.jpg" loading="lazy" alt="A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/6.jpg" data-prompt="Terraced rice fields on a mountainside at dawn, mist lying between the ridges, flooded terraces mirroring a pale sky">
+        <img src="static/gallery/tile/6.jpg" loading="lazy" alt="Terraced rice fields on a mountainside at dawn, mist lying between the ridges, flooded terraces mirroring a pale sky">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/23.jpg" data-prompt="A spiderweb strung with dew at sunrise, each droplet holding an inverted image of the meadow behind">
+        <img src="static/gallery/tile/23.jpg" loading="lazy" alt="A spiderweb strung with dew at sunrise, each droplet holding an inverted image of the meadow behind">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button class="wide" data-view="static/gallery/view/25.jpg" data-prompt="A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light">
+        <img src="static/gallery/tile/25.jpg" loading="lazy" alt="A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/10.jpg" data-prompt="A desert canyon at golden hour, layered sandstone walls in orange and violet, a narrow green river far below">
+        <img src="static/gallery/tile/10.jpg" loading="lazy" alt="A desert canyon at golden hour, layered sandstone walls in orange and violet, a narrow green river far below">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/16.jpg" data-prompt="A Japanese temple in autumn, moss garden and raked gravel, maple leaves on the ground, fine wooden joinery under deep eaves">
+        <img src="static/gallery/tile/16.jpg" loading="lazy" alt="A Japanese temple in autumn, moss garden and raked gravel, maple leaves on the ground, fine wooden joinery under deep eaves">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/5.jpg" data-prompt="A barn owl gliding low over a meadow at dusk, wing feathers spread and translucent, soft grasses beneath">
+        <img src="static/gallery/tile/5.jpg" loading="lazy" alt="A barn owl gliding low over a meadow at dusk, wing feathers spread and translucent, soft grasses beneath">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/31.jpg" data-prompt="An oil still life of copper pots, figs and a linen cloth on a dark table, thick visible brushwork, single window light">
+        <img src="static/gallery/tile/31.jpg" loading="lazy" alt="An oil still life of copper pots, figs and a linen cloth on a dark table, thick visible brushwork, single window light">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/17.jpg" data-prompt="A narrow Venetian canal at blue hour, weathered plaster facades, lamplight on the water, a moored boat under a stone bridge">
+        <img src="static/gallery/tile/17.jpg" loading="lazy" alt="A narrow Venetian canal at blue hour, weathered plaster facades, lamplight on the water, a moored boat under a stone bridge">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/24.jpg" data-prompt="An elderly potter's hands shaping a tall vessel on a wheel, wet clay ridged under the fingers, dim workshop light">
+        <img src="static/gallery/tile/24.jpg" loading="lazy" alt="An elderly potter's hands shaping a tall vessel on a wheel, wet clay ridged under the fingers, dim workshop light">
+        <span>4096 &times; 4096</span>
+      </button>
+      <button data-view="static/gallery/view/28.jpg" data-prompt="A watercolour of a mountain village under snow, soft graded washes and visible paper grain, muted blues and warm window light">
+        <img src="static/gallery/tile/28.jpg" loading="lazy" alt="A watercolour of a mountain village under snow, soft graded washes and visible paper grain, muted blues and warm window light">
+        <span>4096 &times; 4096</span>
+      </button>
+    </div>
+    <p class="note-line">Every image is 4096&times;4096, generated by HRDiT from off-the-shelf FLUX.1-dev. Click one to open it larger.</p>
+  </div>
+</section>
+
+<section id="detail">
+  <div class="wrap">
+    <h2>Detail at 4K</h2>
+    <div class="lead">
+      <p>HRDiT generates better detail at 4096&times;4096. Left is the whole image, right is the detail.</p>
+    </div>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/tile/13.jpg" loading="lazy" alt="A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+          <img src="static/gallery/crop/13.jpg" loading="lazy" alt="A 800 by 800 pixel window of the same image at full resolution: lit windows and balconies">
+        </div>
+        <figcaption>lit windows and balconies</figcaption>
+      </figure>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/tile/14.jpg" loading="lazy" alt="A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+          <img src="static/gallery/crop/14.jpg" loading="lazy" alt="A 800 by 800 pixel window of the same image at full resolution: carved stucco and muqarnas">
+        </div>
+        <figcaption>carved stucco and muqarnas</figcaption>
+      </figure>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/tile/25.jpg" loading="lazy" alt="A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light">
+          <img src="static/gallery/crop/25.jpg" loading="lazy" alt="A 800 by 800 pixel window of the same image at full resolution: embroidery, stitch by stitch">
+        </div>
+        <figcaption>embroidery, stitch by stitch</figcaption>
+      </figure>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/tile/18.jpg" loading="lazy" alt="A peacock feather in raking light, individual barbs separated, iridescent eyespot shifting from blue to green">
+          <img src="static/gallery/crop/18.jpg" loading="lazy" alt="A 800 by 800 pixel window of the same image at full resolution: separated feather barbs">
+        </div>
+        <figcaption>separated feather barbs</figcaption>
+      </figure>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2>Compared with FLUX.1-dev</h2>
+
+    <h3>FLUX at 1024&times;1024</h3>
+    <div class="lead">
+      <p>Left is a 1024&times;1024 image from FLUX.1-dev, scaled up; right is HRDiT. Drag to compare.</p>
+    </div>
+      <figure class="compare">
+        <div class="viewport" style="--split: 50%">
+          <img class="hi" src="static/gallery/slider/13_hi.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+          <img class="lo" src="static/gallery/slider/13_lo.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev at 1024 by 1024, enlarged: A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+          <span class="tag left">FLUX.1-dev 1024&times;1024, enlarged</span>
+          <span class="tag right">HRDiT 4096&times;4096</span>
+          <span class="grip" aria-hidden="true"></span>
+        </div>
+      </figure>
+      <figure class="compare">
+        <div class="viewport" style="--split: 50%">
+          <img class="hi" src="static/gallery/slider/23_hi.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: a spiderweb strung with dew at sunrise.">
+          <img class="lo" src="static/gallery/slider/23_lo.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev at 1024 by 1024, enlarged: a spiderweb strung with dew at sunrise.">
+          <span class="tag left">FLUX.1-dev 1024&times;1024, enlarged</span>
+          <span class="tag right">HRDiT 4096&times;4096</span>
+          <span class="grip" aria-hidden="true"></span>
+        </div>
+      </figure>
+      <figure class="compare">
+        <div class="viewport" style="--split: 50%">
+          <img class="hi" src="static/gallery/slider/14_hi.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+          <img class="lo" src="static/gallery/slider/14_lo.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev at 1024 by 1024, enlarged: A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+          <span class="tag left">FLUX.1-dev 1024&times;1024, enlarged</span>
+          <span class="tag right">HRDiT 4096&times;4096</span>
+          <span class="grip" aria-hidden="true"></span>
+        </div>
+      </figure>
+      <figure class="compare">
+        <div class="viewport" style="--split: 50%">
+          <img class="hi" src="static/gallery/slider/7_hi.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy">
+          <img class="lo" src="static/gallery/slider/7_lo.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev at 1024 by 1024, enlarged: An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy">
+          <span class="tag left">FLUX.1-dev 1024&times;1024, enlarged</span>
+          <span class="tag right">HRDiT 4096&times;4096</span>
+          <span class="grip" aria-hidden="true"></span>
+        </div>
+      </figure>
+
+    <h3>FLUX at 4096&times;4096</h3>
+    <div class="lead">
+      <p>Left is FLUX.1-dev run directly at 4096&times;4096; right is HRDiT, same prompt and seed.</p>
+    </div>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/direct/13_direct.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev asked for 4096 by 4096 in one pass: a featureless field.">
+          <img src="static/gallery/direct/13_hrdit.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies">
+        </div>
+      </figure>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/direct/14_direct.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev asked for 4096 by 4096 in one pass: a featureless field.">
+          <img src="static/gallery/direct/14_hrdit.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees">
+        </div>
+      </figure>
+      <figure>
+        <div class="pair">
+          <img src="static/gallery/direct/25_direct.jpg" loading="lazy"
+               alt="Stock FLUX.1-dev asked for 4096 by 4096 in one pass: a featureless field.">
+          <img src="static/gallery/direct/25_hrdit.jpg" loading="lazy"
+               alt="HRDiT at 4096 by 4096: A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light">
+        </div>
+      </figure>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <h2>Method</h2>
+    <div class="lead">
+      <p>
+        HRDiT is a training-free framework built from two components, each aimed at
+        one of the two challenges and at the cause we identify behind it. It runs on
+        off-the-shelf weights and needs no fine-tuning.
+      </p>
+    </div>
+
+    <figure class="framed">
+      <img src="static/images/fig1_motivation.png"
+           alt="Off-the-shelf DiT models at 1024x1024 versus direct and I-Max adaptation at 4096x4096.">
+      <figcaption>
+        Off-the-shelf DiT models generate high-quality images quickly at the
+        resolution they were trained on (1024&times;1024). Pushed to 4096&times;4096
+        &mdash; either directly or with the DiT-tailored I-Max &mdash; they produce
+        <b>spatial disorder</b> (red boxes) and take a very <b>long time</b>
+        (red text).
+      </figcaption>
+    </figure>
+
+    <h3>Spatial Position Alignment (SPA)</h3>
+    <div class="lead">
+      <p>
+        Our analysis traces spatial disorder to the limited expressiveness of the
+        positional embedding mechanism once it is stretched to high resolutions: at
+        high token counts it can no longer keep different pairwise positional signals
+        apart after attention. SPA restores that distinction with two complementary
+        operations. <b>Bundle</b> replaces each token index with a bundle index before
+        it enters the positional encoding, which shrinks the set of pairwise signals
+        the mechanism has to separate. <b>Slide</b> then varies where the bundle
+        boundaries fall and averages over the variants, recovering the positional
+        distinctions that bundling alone would erase inside a bundle.
+      </p>
+    </div>
+    <figure class="narrow">
+      <img src="static/images/fig3_spa.png"
+           alt="Illustration of the bundle and slide operations on seven token indices.">
+      <figcaption>
+        The <b>bundle</b> and <b>slide</b> operations, with <i>T</i> = 7 tokens and
+        bundle size <i>N</i> = 3. (a) Bundling maps the seven token indices onto three
+        bundle indices. (b) Sliding the bundle boundaries produces <i>N</i> variants of
+        the mapping, so tokens that share a bundle in one variant are separated in
+        another.
+      </figcaption>
+    </figure>
+
+    <h3>Head-adaptive Attention Pruning (HAP)</h3>
+    <div class="lead">
+      <p>
+        Profiling shows where the time actually goes: multi-head attention dominates
+        the cost at high resolutions, accounting for over 90% of the generation time
+        for both FLUX and Stable Diffusion 3 at 8K. HAP gives every attention head its
+        own <b>attention scope</b> &mdash; the range of image tokens that head is
+        allowed to look at &mdash; and prunes the attention computed outside it. The
+        scopes are derived once, offline, from the off-the-shelf model, so generation
+        stays training-free.
+      </p>
+    </div>
+    <figure class="narrow">
+      <img src="static/images/fig2_attn_time.png"
+           alt="Line chart of the share of generation time spent on multi-head attention, rising with resolution for FLUX and Stable Diffusion 3.">
+      <figcaption>
+        Share of the per-image generation time spent on multi-head attention, for
+        off-the-shelf FLUX and Stable Diffusion 3 across resolutions. Attention goes
+        from a minor cost at 1K to the dominant one at 4K and 8K.
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="bibtex">
+  <div class="wrap lead">
+    <h2>BibTeX</h2>
+<pre>@inproceedings{xue2026hrdit,
+  title={{HRDiT}: Training-Free High-Resolution Image Generation with Off-the-Shelf Diffusion Transformer Models},
+  author={Xue, Yu and Qu, Haoxuan and Li, Zhuoling and Xu, Hongbin and Yin, Jianxiong and See, Simon and Rahmani, Hossein and Liu, Jun},
+  booktitle={European Conference on Computer Vision (ECCV)},
+  year={2026}
+}</pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Figures are from the paper. Page source on
+    <a href="https://github.com/zylwithxy/HRDiT-page">GitHub</a>.
+  </div>
+</footer>
+
+<div id="lightbox"><img alt=""><p></p></div>
+
+<script>
+(function () {
+  var box = document.getElementById('lightbox');
+  var img = box.querySelector('img');
+  var cap = box.querySelector('p');
+  Array.prototype.forEach.call(document.querySelectorAll('.mosaic button'), function (b) {
+    b.addEventListener('click', function () {
+      img.src = b.dataset.view;
+      img.alt = b.dataset.prompt;
+      cap.textContent = b.dataset.prompt;
+      box.classList.add('open');
+    });
+  });
+  var wipes = document.querySelectorAll('.compare .viewport');
+  Array.prototype.forEach.call(wipes, function (v) {
+    function set(e) {
+      var r = v.getBoundingClientRect();
+      var x = ((e.clientX - r.left) / r.width) * 100;
+      v.style.setProperty('--split', Math.max(0, Math.min(100, x)) + '%');
+    }
+    v.addEventListener('pointerdown', function (e) {
+      v.setPointerCapture(e.pointerId);
+      v.classList.add('dragging');
+      set(e);
+    });
+    v.addEventListener('pointermove', function (e) {
+      if (v.classList.contains('dragging')) { set(e); }
+    });
+    ['pointerup', 'pointercancel'].forEach(function (t) {
+      v.addEventListener(t, function () { v.classList.remove('dragging'); });
+    });
+  });
+
+  box.addEventListener('click', function () { box.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { box.classList.remove('open'); }
+  });
+})();
+</script>
+
+</body>
+</html>
