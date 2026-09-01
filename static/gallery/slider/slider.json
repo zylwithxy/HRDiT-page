@@ -1,5 +1,13 @@
 [
  {
+  "index": 7,
+  "prompt": "An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy"
+ },
+ {
+  "index": 8,
+  "prompt": "Rows of lavender in bloom converging toward a stone farmhouse on a low hill, warm evening light, distant cypress"
+ },
+ {
   "index": 13,
   "prompt": "A dense hillside city at dusk, thousands of lit apartment windows stacked up the slope, laundry and air conditioners on the balconies"
  },
@@ -8,11 +16,19 @@
   "prompt": "A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees"
  },
  {
+  "index": 15,
+  "prompt": "A Gothic cathedral rose window seen from inside, stained glass throwing coloured light across worn stone flagstones"
+ },
+ {
   "index": 25,
   "prompt": "A young woman in an embroidered folk costume standing in a summer field, dense threadwork and beading, soft overcast light"
  },
  {
-  "index": 7,
-  "prompt": "An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy"
+  "index": 29,
+  "prompt": "A fine ink drawing of a brass clockwork orrery, dense crosshatching, gears and rings casting shadow on a wooden desk"
+ },
+ {
+  "index": 32,
+  "prompt": "A coral reef in clear shallow water, branching corals and anemones, a school of small orange fish, sunlight rippling on the sand"
  }
 ]

@@ -20,6 +20,11 @@
   "prompt": "An autumn gorge with a waterfall, wet mossy boulders, birch and maple in full colour, low sunlight through the canopy"
  },
  {
+  "index": 8,
+  "category": "landscape",
+  "prompt": "Rows of lavender in bloom converging toward a stone farmhouse on a low hill, warm evening light, distant cypress"
+ },
+ {
   "index": 9,
   "category": "landscape",
   "prompt": "Icebergs in a still arctic bay beneath the aurora, green and violet light reflected in black water, snow-covered peaks"
@@ -45,6 +50,11 @@
   "category": "architecture",
   "prompt": "A Moroccan riad courtyard at midday, intricate zellige tilework, carved stucco arches, a still fountain and orange trees",
   "crop": "carved stucco and muqarnas"
+ },
+ {
+  "index": 15,
+  "category": "architecture",
+  "prompt": "A Gothic cathedral rose window seen from inside, stained glass throwing coloured light across worn stone flagstones"
  },
  {
   "index": 16,
@@ -89,13 +99,28 @@
   "prompt": "A watercolour of a mountain village under snow, soft graded washes and visible paper grain, muted blues and warm window light"
  },
  {
+  "index": 29,
+  "category": "illustration",
+  "prompt": "A fine ink drawing of a brass clockwork orrery, dense crosshatching, gears and rings casting shadow on a wooden desk"
+ },
+ {
   "index": 31,
   "category": "illustration",
   "prompt": "An oil still life of copper pots, figs and a linen cloth on a dark table, thick visible brushwork, single window light"
  },
  {
+  "index": 32,
+  "category": "underwater",
+  "prompt": "A coral reef in clear shallow water, branching corals and anemones, a school of small orange fish, sunlight rippling on the sand"
+ },
+ {
   "index": 33,
   "category": "underwater",
   "prompt": "A translucent jellyfish drifting in dark water, trailing tentacles catching a single beam of light"
+ },
+ {
+  "index": 35,
+  "category": "scene",
+  "prompt": "Hot air balloons rising over an eroded volcanic valley at sunrise, cave dwellings cut into the rock, long shadows"
  }
 ]
